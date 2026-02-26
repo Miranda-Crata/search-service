@@ -1,0 +1,47 @@
+app: miranda-app
+service: search-service
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-prune-plugin
+
+provider:
+  name: aws
+  region: ${opt:region, 'eu-central-1'}
+  stage: ${opt:stage, 'staging'}
+  apiGateway:
+    restApiId: ${ssm:/miranda/internal-api/api_gateway/${self:provider.stage}/restApiId}
+    restApiRootResourceId: ${ssm:/miranda/internal-api/api_gateway/${self:provider.stage}/restApiRootResourceId}
+  environment:
+    SUPABASE_DB_URL: ${ssm:/miranda/supabase/db-url}
+    SUPABASE_USE_POOLER: 'true'
+  iam:
+    role: arn:aws:iam::430319687079:role/miranda-api-role
+
+functions:
+  search:
+    image:
+      uri: 430319687079.dkr.ecr.eu-central-1.amazonaws.com/miranda/search-service:latest
+      command:
+        - src.lambdas.search.handler
+    timeout: 30
+    memorySize: 1024
+    events:
+      - http:
+          path: search
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+            allowCredentials: false
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: ${ssm:/miranda/internal-api/api_gateway/${self:provider.stage}/cognitoAuthorizerId}
+
+custom:
+  prune:
+    automatic: true
+    number: 2
