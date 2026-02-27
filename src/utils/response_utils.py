@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 
 CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": "https://dev.d2k0gshvid8e1y.amplifyapp.com",
     "Access-Control-Allow-Headers": "Content-Type,Authorization",
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
 }

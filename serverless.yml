@@ -32,7 +32,7 @@ functions:
           path: search
           method: post
           cors:
-            origin: '*'
+            origin: 'https://dev.d2k0gshvid8e1y.amplifyapp.com'
             headers:
               - Content-Type
               - Authorization
